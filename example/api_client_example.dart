@@ -1,6 +1,8 @@
 import 'package:api_client/api_client.dart';
 
+@ApiClient()
+abstract class TestApi {}
+
 void main() {
-  var awesome = Awesome();
-  print('awesome: ${awesome.isAwesome}');
+  //final client = TestApi();
 }

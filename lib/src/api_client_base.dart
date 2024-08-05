@@ -1,6 +1,12 @@
-// TODO: Put public facing types in this file.
+import 'dart:async';
 
-/// Checks if you are awesome. Spoiler: you are.
-class Awesome {
-  bool get isAwesome => true;
+import 'package:macros/macros.dart';
+
+macro class ApiClient implements ClassDefinitionMacro {
+
+  const ApiClient();
+
+  @override
+  FutureOr<void> buildDefinitionForClass(ClassDeclaration clazz, TypeDefinitionBuilder builder) {
+  }
 }
