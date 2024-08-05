@@ -1,14 +1,14 @@
 name: api_client
-description: A starting point for Dart libraries or applications.
+description: Generates a client for a RESTful API.
 version: 1.0.0
-# repository: https://github.com/my_org/my_repo
+repository: https://github.com/Ownii/api-client
 
 environment:
-  sdk: ^3.6.0-107.0.dev
+  sdk: ^3.5.0-152
 
-# Add regular dependencies here.
 dependencies:
-  # path: ^1.8.0
+  macros: ^0.1.0-main.5
+  json: ^0.20.2
 
 dev_dependencies:
   lints: ^4.0.0
