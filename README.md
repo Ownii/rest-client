@@ -37,3 +37,7 @@ const like = 'sample';
 TODO: Tell users more about the package: where to find more information, how to 
 contribute to the package, how to file issues, what response they can expect 
 from the package authors, and more.
+
+## Macro Development
+[Macro Feature Board](https://github.com/orgs/dart-lang/projects/70/views/5)
+[Macro Feature Specifications](https://github.com/dart-lang/language/blob/main/working/macros/feature-specification.md)
