@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:api_client/src/rest.dart';
 import 'package:api_client/src/utils/list_extensions.dart';
 import 'package:api_client/src/utils/type_extensions.dart';
+import 'package:api_client/src/utils/builder_extensions.dart';
 import 'package:macros/macros.dart';
 
 mixin RequestMacro on HttpMethod implements MethodDefinitionMacro {
@@ -91,7 +92,7 @@ mixin RequestMacro on HttpMethod implements MethodDefinitionMacro {
     final returnType = (method.returnType as NamedTypeAnnotation)
         .typeArguments
         .single; // we know returnType is Future<T>
-    final queryParams = getQueryParams(method);
+    final queryParams = getQueryParams(method, builder);
 
     builder.augment(
       FunctionBodyCode.fromParts([
@@ -108,17 +109,42 @@ mixin RequestMacro on HttpMethod implements MethodDefinitionMacro {
     );
   }
 
-  Map<String, String> getQueryParams(MethodDeclaration method) {
+  Map<String, String> getQueryParams(
+      MethodDeclaration method, FunctionDefinitionBuilder builder) {
     final parameters = [
       ...method.positionalParameters,
       ...method.namedParameters
     ];
-    final queryParams = parameters.where((param) =>
-        param.metadata.any((meta) => _isAnnotationType(meta, 'Query')));
+    final queryParams = parameters
+        .where((param) =>
+            param.metadata.any((meta) => _isAnnotationType(meta, 'Query')))
+        .associate((param) => _getQueryFromAnnotation(
+            param.metadata
+                .firstWhere((meta) => _isAnnotationType(meta, 'Query')),
+            builder));
     return {
-      for (final param in queryParams)
-        param.name: param.name, // TODO: get name from annotation if provided
+      for (final param in queryParams.keys)
+        queryParams[param]?.name ?? param.name: param.name,
     };
+  }
+
+  Query _getQueryFromAnnotation(
+      MetadataAnnotation meta, FunctionDefinitionBuilder builder) {
+    switch (meta) {
+      case ConstructorMetadataAnnotation():
+        final nameArgument = meta.positionalArguments.firstOrNull;
+        if (nameArgument != null) {
+          // analyzer crashs if we try to report on meta itself
+          // meta.type reports on macro, not sure why, but okay for now
+          builder.reportWarning(
+            'name argument in ${meta.type.name} is currenctly not support because of lack of inspection api, the parameter name is used instead',
+            meta.type.asDiagnosticTarget,
+          );
+        }
+        return Query();
+      default:
+        throw UnimplementedError();
+    }
   }
 
   bool _isAnnotationType(MetadataAnnotation meta, String type) {

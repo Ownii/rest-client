@@ -5,4 +5,12 @@ extension ListX<T> on Iterable<T> {
     }
     return null;
   }
+
+  Map<T, R> associate<R>(R Function(T) transform) {
+    final map = <T, R>{};
+    for (final element in this) {
+      map[element] = transform(element);
+    }
+    return map;
+  }
 }
