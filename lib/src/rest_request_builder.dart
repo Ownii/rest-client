@@ -111,6 +111,13 @@ class RestRequestBuilder {
   }
 
   void _addPathParameter(FormalParameterDeclaration parameter) {
+    if (!path.contains('{${parameter.identifier.name}}')) {
+      _reportError(
+        'Path parameter ${parameter.identifier.name} not found in path',
+        parameter.asDiagnosticTarget,
+      );
+      return;
+    }
     _pathParams.add(parameter.identifier.name);
     // TODO: check if all path params are actually parameters
     // TODO: check if used parameters are url encodable
