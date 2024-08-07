@@ -8,7 +8,7 @@ class TestModel {}
 @ApiClient()
 class TestApiV1 {
   @Get('/test')
-  external Future<TestModel> getTestData();
+  external Future<TestModel> getTestData(@Query() String id);
 }
 
 void main() async {

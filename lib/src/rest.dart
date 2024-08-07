@@ -71,17 +71,37 @@ sealed class HttpMethod implements MethodDefinitionMacro {
   Future<void> buildApiMethodImplementation(MethodDeclaration method, FunctionDefinitionBuilder builder) async {
 
     final returnType = (method.returnType as NamedTypeAnnotation).typeArguments.single; // we know returnType is Future<T>
-
+    final queryParams = getQueryParams(method);
 
     builder.augment(FunctionBodyCode.fromParts([
       'async {\n',
-      '\t\tfinal response = await dio.get(\'$path\');\n', 
+      '\t\tfinal response = await dio.get(\'$path\'',
+      if(queryParams.isNotEmpty) 
+        ', queryParameters: {${queryParams.entries.map((entry) => '\'${entry.key}\': ${entry.value}').join(', ')}}',
+      ');\n', 
       '\t\treturn ',
       returnType.code,
       '.fromJson(response.data);',
       '\n\t}',
       ]),);
   }
+
+  Map<String, String> getQueryParams(MethodDeclaration method) {
+    final parameters = [...method.positionalParameters, ...method.namedParameters];
+    final queryParams = parameters.where((param) => param.metadata.any((meta) => _isAnnotationType(meta, 'Query')));
+    return {
+      for(final param in queryParams)
+        param.name: param.name, // TODO: get name from annotation if provided
+    };
+  }
+
+  bool _isAnnotationType(MetadataAnnotation meta, String type) {
+    return switch(meta) {
+      ConstructorMetadataAnnotation() => meta.type.name == type,
+      _ => false,
+    };
+  }
+  
 }
 
 macro class Get extends HttpMethod {
@@ -110,8 +130,8 @@ class Body {
 }
 
 class Query {
-  final String name;
-  const Query(this.name);
+  final String? name;
+  const Query([this.name]);
 }
 
 class PathParam {

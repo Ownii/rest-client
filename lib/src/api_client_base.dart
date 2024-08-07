@@ -29,7 +29,7 @@ macro class ApiClient implements ClassDeclarationsMacro {
       ],
       ');\n',
       ],),);
-  }  
+  }
 
 }
 

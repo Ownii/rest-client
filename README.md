@@ -11,12 +11,12 @@ and the Flutter guide for
 [developing packages and plugins](https://flutter.dev/to/develop-packages). 
 -->
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+A rest client for your api using [dart macros](https://dart.dev/language/macros)
 
 ## Features
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+Create a rest client by defining just the interface
+The implementation is generated using [dart macros](https://dart.dev/language/macros)
 
 ## Getting started
 
