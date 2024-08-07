@@ -8,6 +8,8 @@ import 'package:api_client/src/utils/type_extensions.dart';
 import 'package:api_client/src/utils/builder_extensions.dart';
 import 'package:macros/macros.dart';
 
+import 'libraries.dart';
+
 mixin RequestMacro on HttpMethod implements MethodDefinitionMacro {
   @override
   FutureOr<void> buildDefinitionForMethod(
@@ -94,12 +96,17 @@ mixin RequestMacro on HttpMethod implements MethodDefinitionMacro {
         .single; // we know returnType is Future<T>
     final queryParams = getQueryParams(method, builder);
 
+    final path = _buildPath(method, builder);
+
     builder.augment(
       FunctionBodyCode.fromParts([
         'async {\n',
-        '\t\tfinal response = await dio.get(\'$path\'',
+        '\t\tfinal response = await dio.request(\'$path\',',
         if (queryParams.isNotEmpty)
-          ', queryParameters: {${queryParams.entries.map((entry) => '\'${entry.key}\': ${entry.value}').join(', ')}}',
+          'queryParameters: {${queryParams.entries.map((entry) => '\'${entry.key}\': ${entry.value}').join(', ')}},',
+        'options: ',
+        (await builder.type(Lib.dio, 'Options')),
+        '(method: \'${this.method}\'),',
         ');\n',
         '\t\treturn ',
         returnType.code,
@@ -107,6 +114,18 @@ mixin RequestMacro on HttpMethod implements MethodDefinitionMacro {
         '\n\t}',
       ]),
     );
+  }
+
+  String _buildPath(
+      MethodDeclaration method, FunctionDefinitionBuilder builder) {
+    RegExp regExp = RegExp(r'\{([a-zA-Z_]\w*)\}');
+    // TODO: check if all path params are actually parameters
+    // TODO: check if used parameters are url encodable
+    // TODO: check if there are not annoated parameters that are no path params
+
+    return path.replaceAllMapped(regExp, (Match match) {
+      return '\${${match[1]}}';
+    });
   }
 
   Map<String, String> getQueryParams(

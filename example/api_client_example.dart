@@ -10,7 +10,16 @@ class TestModel {}
 @ApiClient()
 class TestApiV1 {
   @Get('/test')
-  external Future<TestModel> getTestData(@Query('Test') String id);
+  external Future<TestModel> getTestData(@Query() String id);
+
+  @Get('/test/{id}')
+  external Future<TestModel> getTestDataWithPathParam(String id);
+
+  @Post('/test')
+  external Future<TestModel> postTestData(@Body() TestModel data);
+
+  @Put('/test')
+  external Future<TestModel> putTestData(@BodyField() String value);
 }
 
 void main() async {
