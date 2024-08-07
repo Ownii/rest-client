@@ -20,6 +20,7 @@ linter:
     - use_super_parameters
     - require_trailing_commas
     - prefer_single_quotes
+    - prefer_relative_imports
 
 analyzer:
   enable-experiment:

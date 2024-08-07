@@ -1,7 +1,11 @@
+// ignore_for_file: prefer_relative_imports
+
 import 'dart:async';
 
 import 'package:api_client/src/utils/type_extensions.dart';
 import 'package:macros/macros.dart';
+
+import 'libraries.dart';
 
 macro class ApiClient implements ClassDeclarationsMacro {
 
@@ -16,8 +20,8 @@ macro class ApiClient implements ClassDeclarationsMacro {
   }
 
   Future<void> _declareDio(MemberDeclarationBuilder builder) async {
-    final dio = await builder.type('package:dio/dio.dart', 'Dio');
-    final baseOptions = await builder.type('package:dio/dio.dart', 'BaseOptions');
+    final dio = await builder.type(Lib.dio, 'Dio');
+    final baseOptions = await builder.type(Lib.dio, 'BaseOptions');
     builder.declareInType(DeclarationCode.fromParts([
       '\tfinal dio = ',
       dio,
