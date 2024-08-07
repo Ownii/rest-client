@@ -2,7 +2,7 @@
 
 import 'dart:async';
 
-import 'package:api_client/src/utils/type_extensions.dart';
+import 'package:rest_client/src/utils/type_extensions.dart';
 import 'package:macros/macros.dart';
 
 import 'libraries.dart';

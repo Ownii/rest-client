@@ -1,4 +1,4 @@
-name: api_client
+name: rest_client
 description: Generates a client for a RESTful API.
 version: 1.0.0
 repository: https://github.com/Ownii/api-client

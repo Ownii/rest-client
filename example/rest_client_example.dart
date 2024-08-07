@@ -1,5 +1,5 @@
-import 'package:api_client/api_client.dart';
-import 'package:api_client/src/rest.dart';
+import 'package:rest_client/rest_client.dart';
+import 'package:rest_client/src/rest.dart';
 import 'package:json/json.dart';
 // ignore: unused_import // sometimes the import in the augemented code fails, TODO: check why
 import 'package:dio/dio.dart';

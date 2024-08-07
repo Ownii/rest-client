@@ -2,10 +2,10 @@
 
 import 'dart:async';
 
-import 'package:api_client/src/rest.dart';
-import 'package:api_client/src/utils/list_extensions.dart';
-import 'package:api_client/src/utils/type_extensions.dart';
-import 'package:api_client/src/utils/builder_extensions.dart';
+import 'package:rest_client/src/rest.dart';
+import 'package:rest_client/src/utils/list_extensions.dart';
+import 'package:rest_client/src/utils/type_extensions.dart';
+import 'package:rest_client/src/utils/builder_extensions.dart';
 import 'package:macros/macros.dart';
 
 import 'libraries.dart';
@@ -35,6 +35,8 @@ mixin RequestMacro on HttpMethod implements MethodDefinitionMacro {
       final genericType =
           (method.returnType as NamedTypeAnnotation).typeArguments.singleOrNull;
 
+      // TODO: can also be void
+
       if (genericType == null ||
           !(await _isJsonDeserializable(genericType, builder))) {
         builder.report(Diagnostic(
@@ -58,6 +60,9 @@ mixin RequestMacro on HttpMethod implements MethodDefinitionMacro {
 
   Future<bool> _isJsonDeserializable(
       TypeAnnotation type, FunctionDefinitionBuilder builder) async {
+    // TODO: can also be a list of json serializable
+    // TODO: can also be a map of json serializable
+
     // get fromJson constructor
     final namedType = type as NamedTypeAnnotation;
     final typeDeclaration =
