@@ -17,3 +17,12 @@ extension TypePhaseIntrospectorX on TypePhaseIntrospector {
     return NamedTypeAnnotationCode(name: type);
   }
 }
+
+extension MetadataAnnotationX on MetadataAnnotation {
+  String? get typeName {
+    return switch (this) {
+      ConstructorMetadataAnnotation(:final type) => type.name,
+      _ => null,
+    };
+  }
+}

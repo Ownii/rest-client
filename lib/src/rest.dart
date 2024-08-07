@@ -5,6 +5,7 @@ import 'rest_macro.dart';
 abstract class HttpMethod {
   final String path;
   abstract final String method;
+  final bool canHaveBody = true;
 
   const HttpMethod(this.path);  
 }
@@ -16,27 +17,30 @@ macro class Get extends HttpMethod with RequestMacro {
   @override
   String get method => 'GET';
 
+  @override
+  bool get canHaveBody => false;
+
 }
 
-class Post extends HttpMethod with RequestMacro {
+macro class Post extends HttpMethod with RequestMacro {
   const Post(super.path);
   @override
   String get method => 'POST';
 }
 
-class Put extends HttpMethod with RequestMacro {
+macro class Put extends HttpMethod with RequestMacro {
   const Put(super.path);
   @override
   String get method => 'PUT';
 }
 
-class Patch extends HttpMethod with RequestMacro {
+macro class Patch extends HttpMethod with RequestMacro {
   const Patch(super.path);
   @override
   String get method => 'PATCH';
 }
 
-class Delete extends HttpMethod with RequestMacro {
+macro class Delete extends HttpMethod with RequestMacro {
   const Delete(super.path);
   @override
   String get method => 'DELETE';
@@ -58,9 +62,4 @@ class BodyField {
 class Query {
   final String? name;
   const Query([this.name]);
-}
-
-class PathParam {
-  final String? name;
-  const PathParam([this.name]);
 }
