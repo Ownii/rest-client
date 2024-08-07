@@ -1,6 +1,7 @@
 import 'package:api_client/api_client.dart';
 import 'package:api_client/src/rest.dart';
 import 'package:json/json.dart';
+import 'package:dio/dio.dart';
 
 @JsonCodable()
 class TestModel {}
@@ -13,6 +14,6 @@ class TestApiV1 {
 
 void main() async {
   final client = TestApiV1();
-  final data = await client.getTestData();
+  final data = await client.getTestData('123');
   print(data);
 }
