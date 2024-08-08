@@ -12,12 +12,13 @@ class RestRequestBuilder {
 
   bool _valid = true;
 
-  String path;
-  String method = 'GET';
+  final String path;
+  final HttpMethod method;
 
   TypeAnnotation? _returnType;
   final Map<String, String> _queryParams = {};
   final List<String> _pathParams = [];
+  (String, TypeAnnotation)? _bodyParam;
 
   RestRequestBuilder(this.builder, {required this.path, required this.method})
       : validator = Validator(builder);
@@ -124,9 +125,22 @@ class RestRequestBuilder {
     // TODO: check if there are not annoated parameters that are no path params
   }
 
-  void _addBodyParam(FormalParameterDeclaration parameter) {
-    // TODO: check if method supports body
-    // TODO: check if body serializable
+  void _addBodyParam(FormalParameterDeclaration parameter) async {
+    if (!method.canHaveBody) {
+      _reportError(
+        'Method ${method.runtimeType} does not support body',
+        parameter.asDiagnosticTarget,
+      );
+      return;
+    }
+    if (!(await validator.isSerializable(parameter.type))) {
+      _reportError(
+        'Body parameter ${parameter.identifier.name} is not json serializable',
+        parameter.asDiagnosticTarget,
+      );
+      return;
+    }
+    _bodyParam = (parameter.identifier.name, parameter.type);
   }
 
   void _addBodyField(
@@ -145,16 +159,21 @@ class RestRequestBuilder {
     return [
       'async {\n',
       '\t\tfinal response = await dio.request(\'$path\',',
+      if (_bodyParam != null) ...[
+        'data: ',
+        ..._serialize(_bodyParam!.$2, _bodyParam!.$1),
+        ',',
+      ],
       if (_queryParams.isNotEmpty)
         'queryParameters: {${_queryParams.entries.map((entry) => '\'${entry.key}\': ${entry.value}').join(', ')}},',
       'options: ',
       (await builder.type(Lib.dio, 'Options')),
-      '(method: \'$method\'),',
+      '(method: \'${method.method}\'),',
       ');\n',
       if (_returnType != null) ...[
         '\t\treturn ',
-        _returnType!.code,
-        '.fromJson(response.data);',
+        ..._deserialize(_returnType!),
+        ';',
       ],
       '\n\t}',
     ];
@@ -171,5 +190,21 @@ class RestRequestBuilder {
   void _reportError(String message, DiagnosticTarget target) {
     builder.reportError(message, target);
     _valid = false;
+  }
+
+  List<Object> _deserialize(TypeAnnotation type) {
+    // TODO: check if response type is array or map
+    return [
+      type.code,
+      '.fromJson(response.data)',
+    ];
+  }
+
+  List<Object> _serialize(TypeAnnotation type, String name) {
+    // TODO: check if primitive, map or list
+    return [
+      name,
+      '.toJson()',
+    ];
   }
 }

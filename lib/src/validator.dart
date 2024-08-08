@@ -27,7 +27,7 @@ class Validator {
       return false;
     }
 
-    // check if constructor takes Map<String, Object>
+    // check if constructor takes Map<String, Object> wh
     final jsonParam = fromJson.positionalParameters.singleOrNull;
     if (jsonParam == null || jsonParam.type.name != 'Map') {
       return false;
@@ -40,6 +40,10 @@ class Validator {
       return false;
     }
 
+    return true;
+  }
+
+  Future<bool> isSerializable(TypeAnnotation type) async {
     return true;
   }
 }

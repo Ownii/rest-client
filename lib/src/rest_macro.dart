@@ -12,7 +12,7 @@ mixin RequestMacro on HttpMethod implements MethodDefinitionMacro {
   FutureOr<void> buildDefinitionForMethod(
       MethodDeclaration method, FunctionDefinitionBuilder builder) async {
     final requestBuilder =
-        RestRequestBuilder(builder, path: path, method: this.method);
+        RestRequestBuilder(builder, path: path, method: this);
     await requestBuilder.withReturnType(method.returnType);
 
     for (var param in [
